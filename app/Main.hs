@@ -1,7 +1,9 @@
 module Main where
 
+import Control.Monad (when)
+
 import Day01
--- import Day02
+import Day02
 -- import Day03
 -- import Day04
 -- import Day05
@@ -28,4 +30,7 @@ import Day01
 
 main :: IO ()
 main = do
-  day01
+  when (False) $ do
+    day01
+
+  day02
