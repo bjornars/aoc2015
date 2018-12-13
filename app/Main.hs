@@ -4,7 +4,7 @@ import Control.Monad (when)
 
 import Day01
 import Day02
--- import Day03
+import Day03
 -- import Day04
 -- import Day05
 -- import Day06
@@ -32,5 +32,5 @@ main :: IO ()
 main = do
   when (False) $ do
     day01
-
-  day02
+    day02
+  day03
