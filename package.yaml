@@ -24,6 +24,8 @@ dependencies:
 - containers
 - lens
 - mtl
+- cryptohash-md5
+- bytestring
 
 library:
   source-dirs: src
