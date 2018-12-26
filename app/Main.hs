@@ -7,7 +7,7 @@ import Day02
 import Day03
 import Day04
 import Day05
--- import Day06
+import Day06
 -- import Day07
 -- import Day08
 -- import Day09
@@ -35,4 +35,5 @@ main = do
     day02
     day03
     day04
-  day05
+    day05
+  day06
