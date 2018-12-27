@@ -1,9 +1,9 @@
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE LambdaCase #-}
 module Day07 where
 
 import           Control.Arrow
-import           Control.Monad.Except
-import           Control.Monad.Reader
+import           Control.Monad.State
 import           Data.Bits
 import           Data.Char
 import qualified Data.Map                     as M
@@ -11,7 +11,8 @@ import           Data.Maybe
 import           Data.Word
 import           Debug.Trace
 import           Lib
-import           Text.ParserCombinators.ReadP
+import           Text.ParserCombinators.ReadP hiding (get)
+import           Text.Printf
 
 import           Prelude                      hiding (read)
 
@@ -56,7 +57,7 @@ parseShift = do
   d <- (string " -> " *> gid)
   pure $ op l r d
 
-type R a = ReaderT (M.Map Id Gate) Maybe a
+type R a = StateT (M.Map Id Gate) Maybe a
 out :: Gate -> Id
 out (Const _ i)    = i
 out (Not _ i)      = i
@@ -69,11 +70,14 @@ out (Rshift _ _ i) = i
 read :: Input -> R Word16
 read (Lit i) = pure i
 read (Cnx i) = do
-  gate <- ReaderT . asks $ M.lookup i
-  eval gate
+  gets (M.lookup i) >>= \case
+    Just gate -> do
+      res <- eval gate
+      modify (M.insert i (Const (Lit res) i))
+      pure res
+    Nothing -> lift Nothing
 
 eval :: Gate -> R Word16
-eval x | traceShow x False = undefined
 eval (Const v1 _)    = read v1
 eval (Not v1 _)      = complement <$> read v1
 eval (And v1 v2 _ )  = (.&.) <$> read v1 <*> read v2
@@ -87,5 +91,5 @@ day07 = do
   i <- lines <$> readFile "data/day07.txt"
   let gates = fromJust . traverse (parse line) $ i
   let gatemap = M.fromList $ (out &&& id) <$> gates
-  let res = M.lookup "a" gatemap >>= flip runReaderT gatemap . eval
-  print $ fromJust res
+  let res = M.lookup "a" gatemap >>= flip evalStateT gatemap . eval
+  printf "Part1: %d\n" $ fromJust res
