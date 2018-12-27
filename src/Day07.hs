@@ -93,3 +93,7 @@ day07 = do
   let gatemap = M.fromList $ (out &&& id) <$> gates
   let res = M.lookup "a" gatemap >>= flip evalStateT gatemap . eval
   printf "Part1: %d\n" $ fromJust res
+
+  let gatemap' = M.insert "b" (Const (Lit (fromJust res)) "b") gatemap
+  let res = M.lookup "a" gatemap' >>= flip evalStateT gatemap' . eval
+  printf "Part2: %d\n" $ fromJust res
